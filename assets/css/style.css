@@ -277,6 +277,9 @@ nav {
 
 .about-col-2 {
   flex-basis: 60%;
+  /* hilangkan max-height dan overflow di sini jika ada */
+  max-height: none;
+  overflow: visible;
 }
 
 .sub-title {
@@ -342,6 +345,18 @@ nav {
 
 .tab-contents.active-tab {
   display: block;
+}
+
+.tab-contents-wrapper {
+  max-height: 350px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.tab-contents-wrapper.scrollable {
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 8px;
 }
 
 /* Skill */
@@ -484,8 +499,8 @@ nav {
   transition: transform 0.5s;
 }
 
-.social-icons a i{
-    font-size: 30px;
+.social-icons a i {
+  font-size: 30px;
 }
 
 .social-icons a:hover {

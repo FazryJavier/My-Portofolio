@@ -45,3 +45,30 @@ var tabcontents = document.getElementsByClassName("tab-contents");
         event.currentTarget.classList.add("active-link");
         document.getElementById(tabname).classList.add("active-tab");
     }
+
+document.addEventListener("DOMContentLoaded", function() {
+    const experienceList = document.getElementById('experience-list');
+    const loadMoreBtn = document.getElementById('load-more-experience');
+    const tabContentsWrapper = document.querySelector('.tab-contents-wrapper');
+    if (experienceList && loadMoreBtn && tabContentsWrapper) {
+        const items = experienceList.querySelectorAll('li');
+        let visibleCount = 3;
+        items.forEach((li, idx) => {
+            if (idx >= visibleCount) li.style.display = 'none';
+        });
+        if (items.length > visibleCount) {
+            loadMoreBtn.style.display = 'block';
+        }
+        loadMoreBtn.addEventListener('click', function() {
+            let nextCount = visibleCount + 3;
+            items.forEach((li, idx) => {
+                if (idx < nextCount) li.style.display = '';
+            });
+            visibleCount = nextCount;
+            tabContentsWrapper.classList.add('scrollable');
+            if (visibleCount >= items.length) {
+                loadMoreBtn.style.display = 'none';
+            }
+        });
+    }
+});
