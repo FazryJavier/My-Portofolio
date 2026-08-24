@@ -3,12 +3,15 @@ import { Icon } from 'astro-icon/components';
 import { profile } from '../data/profile';
 
 const links = [
-  { label: 'Home', href: '#home' },
-  { label: 'About', href: '#about' },
-  { label: 'Skills', href: '#skills' },
-  { label: 'Work', href: '#projects' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Home', href: '/#home' },
+  { label: 'About', href: '/#about' },
+  { label: 'Skills', href: '/#skills' },
+  { label: 'Work', href: '/#projects' },
+  { label: 'Contact', href: '/#contact' },
+  { label: 'Blog', href: '/blog' },
 ];
+
+const isBlog = Astro.url.pathname.startsWith('/blog');
 ---
 
 <header
@@ -16,7 +19,7 @@ const links = [
   class="glass fixed inset-x-0 top-0 z-50 border-b border-border transition-all duration-300"
 >
   <nav class="container-page flex h-[76px] items-center justify-between transition-all duration-300" id="site-nav">
-    <a href="#home" class="font-display text-xl font-bold text-fg">
+    <a href="/#home" class="font-display text-xl font-bold text-fg">
       {profile.shortName}<span class="text-accent">.</span>
     </a>
 
@@ -27,6 +30,7 @@ const links = [
           <li>
             <a
               href={l.href}
+              aria-current={l.href === '/blog' && isBlog ? 'true' : undefined}
               class="nav-link relative rounded-lg px-3.5 py-2 text-sm font-medium text-muted transition-colors hover:text-fg aria-[current=true]:text-fg"
             >
               {l.label}
@@ -78,7 +82,8 @@ const links = [
       links.map((l) => (
         <a
           href={l.href}
-          class="mobile-link rounded-lg px-3 py-2.5 font-medium text-muted transition-colors hover:bg-panel-2 hover:text-fg"
+          aria-current={l.href === '/blog' && isBlog ? 'true' : undefined}
+          class="mobile-link rounded-lg px-3 py-2.5 font-medium text-muted transition-colors hover:bg-panel-2 hover:text-fg aria-[current=true]:text-fg"
         >
           {l.label}
         </a>
@@ -133,24 +138,28 @@ const links = [
     })
   );
 
-  // Active link
-  const navLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('.nav-link'));
-  const sections = navLinks
-    .map((l) => document.querySelector(l.getAttribute('href') || ''))
-    .filter(Boolean) as Element[];
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        navLinks.forEach((l) =>
-          l.setAttribute(
-            'aria-current',
-            l.getAttribute('href') === `#${entry.target.id}` ? 'true' : 'false'
-          )
-        );
-      });
-    },
-    { rootMargin: '-40% 0px -55% 0px' }
+  // Active link — only for on-page section links (href contains '#'); the
+  // Blog link keeps its server-rendered aria-current on /blog pages.
+  const hashLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('.nav-link')).filter((l) =>
+    (l.getAttribute('href') || '').includes('#')
   );
-  sections.forEach((s) => observer.observe(s));
+  const idOf = (l: HTMLAnchorElement) => (l.getAttribute('href') || '').split('#')[1];
+  const sections = hashLinks
+    .map((l) => document.getElementById(idOf(l)))
+    .filter(Boolean) as Element[];
+
+  if (sections.length) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          hashLinks.forEach((l) =>
+            l.setAttribute('aria-current', idOf(l) === entry.target.id ? 'true' : 'false')
+          );
+        });
+      },
+      { rootMargin: '-40% 0px -55% 0px' }
+    );
+    sections.forEach((s) => observer.observe(s));
+  }
 </script>
