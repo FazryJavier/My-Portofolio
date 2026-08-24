@@ -1,37 +1,70 @@
 ---
 import { Image } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
 import { profile } from '../data/profile';
 import { education, experience, certificates, organizations, type TimelineItem } from '../data/about';
 import aboutImg from '../assets/about.jpg';
 
 const tabs: { id: string; label: string; items: TimelineItem[] }[] = [
-  { id: 'education', label: 'Education', items: education },
   { id: 'experience', label: 'Experience', items: experience },
+  { id: 'education', label: 'Education', items: education },
   { id: 'certificate', label: 'Certificate', items: certificates },
   { id: 'organization', label: 'Organization', items: organizations },
 ];
-const EXP_VISIBLE = 3;
+const EXP_VISIBLE = 4;
+
+const facts = [
+  { icon: 'lucide:briefcase', label: 'Fullstack Engineer @ GITS Indonesia' },
+  { icon: 'lucide:map-pin', label: profile.location },
+  { icon: 'lucide:graduation-cap', label: 'Informatics, ITENAS Bandung' },
+  { icon: 'lucide:sparkles', label: 'Exploring AI Agents' },
+];
 ---
 
-<section id="about" class="scroll-mt-24 bg-surface">
-  <div class="container-page py-20 md:py-28">
-    <div class="flex flex-col items-start gap-12 md:flex-row" data-reveal>
-      <div class="w-full md:w-[35%]">
-        <Image
-          src={aboutImg}
-          alt={`Photo of ${profile.name}`}
-          width={480}
-          height={560}
-          class="w-full rounded-2xl object-cover shadow-card"
-        />
+<section id="about" class="scroll-mt-24">
+  <div class="container-page py-24 md:py-32">
+    <p class="eyebrow">About</p>
+    <h2 class="mt-3 font-display text-4xl font-bold text-fg sm:text-5xl">A bit about me</h2>
+
+    <div class="mt-12 grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.4fr)]" data-reveal>
+      <!-- Left: photo + quick facts -->
+      <div class="lg:sticky lg:top-28 lg:self-start">
+        <div class="relative overflow-hidden rounded-3xl border border-border">
+          <Image
+            src={aboutImg}
+            alt={`Photo of ${profile.name}`}
+            width={520}
+            height={600}
+            class="w-full object-cover"
+          />
+          <div
+            class="absolute inset-x-0 bottom-0 flex items-center gap-2 bg-linear-to-t from-black/70 to-transparent p-4 text-sm text-white"
+          >
+            <span class="size-2 rounded-full bg-accent-2"></span>
+            Currently building at GITS Indonesia
+          </div>
+        </div>
+
+        <ul class="mt-5 grid gap-3">
+          {
+            facts.map((f) => (
+              <li class="flex items-center gap-3 text-sm text-muted">
+                <span class="grid size-9 shrink-0 place-items-center rounded-lg border border-border text-accent">
+                  <Icon name={f.icon} width={16} height={16} />
+                </span>
+                {f.label}
+              </li>
+            ))
+          }
+        </ul>
       </div>
 
-      <div class="w-full md:w-[65%]">
-        <h2 class="text-4xl font-extrabold text-ink sm:text-5xl">About Me</h2>
-        <p class="mt-5 leading-relaxed text-ink-muted">{profile.aboutBio}</p>
+      <!-- Right: bio + timeline -->
+      <div>
+        <p class="text-lg leading-relaxed text-muted">{profile.aboutBio}</p>
 
-        <!-- Tab buttons -->
-        <div class="mt-8 flex flex-wrap gap-x-8 gap-y-2" role="tablist" aria-label="About sections">
+        <!-- Tabs -->
+        <div class="mt-8 flex flex-wrap gap-2" role="tablist" aria-label="About sections">
           {
             tabs.map((t, i) => (
               <button
@@ -40,17 +73,16 @@ const EXP_VISIBLE = 3;
                 aria-controls={`panel-${t.id}`}
                 aria-selected={i === 0 ? 'true' : 'false'}
                 data-tab={t.id}
-                class="tab-btn relative pb-2 text-lg font-bold text-ink-muted transition-colors aria-selected:text-ink"
+                class="tab-btn rounded-full border border-border px-4 py-1.5 text-sm font-medium text-muted transition-colors aria-selected:border-accent aria-selected:bg-accent/10 aria-selected:text-accent"
               >
                 {t.label}
-                <span class="tab-underline absolute inset-x-0 bottom-0 h-[3px] origin-left scale-x-0 bg-accent transition-transform duration-300" />
               </button>
             ))
           }
         </div>
 
-        <!-- Tab panels -->
-        <div class="mt-6 max-h-[360px] overflow-y-auto pr-2">
+        <!-- Panels: vertical timeline -->
+        <div class="mt-8 max-h-[440px] overflow-y-auto pr-2">
           {
             tabs.map((t, i) => (
               <div
@@ -60,32 +92,42 @@ const EXP_VISIBLE = 3;
                 data-panel={t.id}
                 class={i === 0 ? '' : 'hidden'}
               >
-                <ul class="space-y-4">
-                  {t.items.map((item, idx) => (
-                    <li
-                      class="timeline-item"
-                      data-exp={t.id === 'experience' && idx >= EXP_VISIBLE ? 'hidden' : null}
-                      hidden={t.id === 'experience' && idx >= EXP_VISIBLE}
-                    >
-                      <p class="font-semibold text-rose">{item.period}</p>
-                      <p class="font-medium text-ink">{item.title}</p>
-                      {item.subtitle && <p class="text-sm text-ink-muted">{item.subtitle}</p>}
-                      {item.details && (
-                        <ul class="mt-1 list-disc space-y-0.5 pl-5 text-sm text-ink-muted">
-                          {item.details.map((d) => (
-                            <li>{d}</li>
-                          ))}
-                        </ul>
-                      )}
-                    </li>
-                  ))}
+                <ul>
+                  {t.items.map((item, idx) => {
+                    const hidden = t.id === 'experience' && idx >= EXP_VISIBLE;
+                    const isLast = idx === t.items.length - 1;
+                    return (
+                      <li
+                        class="timeline-item flex gap-4"
+                        data-exp={hidden ? 'hidden' : null}
+                        hidden={hidden}
+                      >
+                        <div class="flex flex-col items-center pt-1.5">
+                          <span class="size-3 shrink-0 rounded-full border-2 border-accent bg-bg" />
+                          {!isLast && <span class="mt-1 w-px flex-1 bg-border" />}
+                        </div>
+                        <div class="pb-7">
+                          <p class="font-mono text-xs tracking-wider text-accent">{item.period}</p>
+                          <p class="mt-1 font-semibold text-fg">{item.title}</p>
+                          {item.subtitle && <p class="text-sm text-muted">{item.subtitle}</p>}
+                          {item.details && (
+                            <ul class="mt-2 list-disc space-y-0.5 pl-5 text-sm text-muted">
+                              {item.details.map((d) => (
+                                <li>{d}</li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      </li>
+                    );
+                  })}
                 </ul>
                 {t.id === 'experience' && t.items.length > EXP_VISIBLE && (
                   <button
                     id="exp-load-more"
-                    class="mt-4 rounded-lg bg-surface-2 px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-secondary hover:text-white"
+                    class="ml-7 rounded-lg border border-border px-4 py-2 text-sm font-medium text-fg transition-colors hover:bg-panel-2"
                   >
-                    Load More
+                    Show earlier roles
                   </button>
                 )}
               </div>
@@ -101,35 +143,20 @@ const EXP_VISIBLE = 3;
   const tabBtns = document.querySelectorAll<HTMLButtonElement>('.tab-btn');
   const panels = document.querySelectorAll<HTMLElement>('[data-panel]');
 
-  const setUnderline = (btn: Element, on: boolean) => {
-    const underline = btn.querySelector('.tab-underline');
-    underline?.classList.toggle('scale-x-100', on);
-    underline?.classList.toggle('scale-x-0', !on);
-  };
-  // Initialise first tab underline
-  if (tabBtns[0]) setUnderline(tabBtns[0], true);
-
   tabBtns.forEach((btn) => {
     btn.addEventListener('click', () => {
       const id = btn.dataset.tab;
-      tabBtns.forEach((b) => {
-        const active = b === btn;
-        b.setAttribute('aria-selected', String(active));
-        setUnderline(b, active);
-      });
+      tabBtns.forEach((b) => b.setAttribute('aria-selected', String(b === btn)));
       panels.forEach((p) => p.classList.toggle('hidden', p.dataset.panel !== id));
     });
   });
 
-  // Experience "Load More"
   const loadMore = document.getElementById('exp-load-more');
   loadMore?.addEventListener('click', () => {
-    document
-      .querySelectorAll<HTMLElement>('[data-exp="hidden"]')
-      .forEach((li) => {
-        li.hidden = false;
-        li.removeAttribute('data-exp');
-      });
+    document.querySelectorAll<HTMLElement>('[data-exp="hidden"]').forEach((li) => {
+      li.hidden = false;
+      li.removeAttribute('data-exp');
+    });
     loadMore.remove();
   });
 </script>

@@ -15,7 +15,8 @@ export const education: TimelineItem[] = [
 ];
 
 export const experience: TimelineItem[] = [
-  { period: 'Jun 2025 - Now', title: 'Staff Programmer', subtitle: 'PT Leading Garment Industries · Full Time' },
+  { period: 'Jan 2026 - Present', title: 'Fullstack Developer', subtitle: 'GITS Indonesia · Contract' },
+  { period: 'Jun 2025 - Dec 2025', title: 'Staff Programmer', subtitle: 'PT Leading Garment Industries · Full Time' },
   { period: 'Jan 2025 - Jul 2025', title: 'Back End Developer', subtitle: 'GITS Indonesia · Contract' },
   { period: 'Feb 2024 - Jun 2024', title: 'Lab Assistant — OOP & Machine Learning', subtitle: 'Itenas' },
   { period: 'Jul 2023 - Nov 2023', title: 'Web Developer Intern', subtitle: 'PT Nuansa Cerah Informasi' },

@@ -15,31 +15,32 @@ export const skillGroups: SkillGroup[] = [
   {
     title: 'Languages',
     items: [
-      { name: 'PHP', icon: 'simple-icons:php' },
+      { name: 'TypeScript', icon: 'simple-icons:typescript' },
       { name: 'JavaScript', icon: 'simple-icons:javascript' },
+      { name: 'PHP', icon: 'simple-icons:php' },
       { name: 'Python', icon: 'simple-icons:python' },
-      { name: 'HTML5', icon: 'simple-icons:html5' },
-      { name: 'CSS3', icon: 'simple-icons:css3' },
-      { name: 'SQL', icon: 'simple-icons:mysql' },
+      { name: 'SQL', icon: 'simple-icons:postgresql' },
     ],
   },
   {
-    title: 'Frameworks & Libraries',
+    title: 'Frameworks',
     items: [
       { name: 'Laravel', icon: 'simple-icons:laravel' },
+      { name: 'Next.js', icon: 'simple-icons:nextdotjs' },
+      { name: 'Vue', icon: 'simple-icons:vuedotjs' },
+      { name: 'Astro', icon: 'simple-icons:astro' },
+      { name: 'FastAPI', icon: 'simple-icons:fastapi' },
       { name: 'Tailwind CSS', icon: 'simple-icons:tailwindcss' },
-      { name: 'Bootstrap', icon: 'simple-icons:bootstrap' },
-      { name: 'Streamlit', icon: 'simple-icons:streamlit' },
     ],
   },
   {
-    title: 'Tools & Platforms',
+    title: 'Tools & Databases',
     items: [
+      { name: 'PostgreSQL', icon: 'simple-icons:postgresql' },
       { name: 'MySQL', icon: 'simple-icons:mysql' },
+      { name: 'Docker', icon: 'simple-icons:docker' },
       { name: 'Git', icon: 'simple-icons:git' },
       { name: 'GitHub', icon: 'simple-icons:github' },
-      { name: 'Looker Studio', icon: 'simple-icons:googledatastudio' },
-      { name: 'ESP32 / IoT', icon: 'simple-icons:espressif' },
     ],
   },
 ];

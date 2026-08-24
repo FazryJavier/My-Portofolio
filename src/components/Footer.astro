@@ -4,11 +4,14 @@ import { profile } from '../data/profile';
 const year = new Date().getFullYear();
 ---
 
-<footer class="bg-primary">
-  <div class="container-page flex flex-col items-center gap-4 py-8 text-center sm:flex-row sm:justify-between sm:text-left">
-    <p class="font-medium text-ink">
-      © {year} {profile.name}. All rights reserved.
-    </p>
+<footer class="border-t border-border">
+  <div class="container-page flex flex-col items-center gap-4 py-10 text-center sm:flex-row sm:justify-between sm:text-left">
+    <div>
+      <a href="#home" class="font-display text-lg font-bold text-fg">
+        {profile.shortName}<span class="text-accent">.</span>
+      </a>
+      <p class="mt-1 text-sm text-muted">© {year} {profile.name}. Built with Astro & Tailwind.</p>
+    </div>
     <SocialIcons size={20} />
   </div>
 </footer>

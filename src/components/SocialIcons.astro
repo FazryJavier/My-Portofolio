@@ -18,7 +18,7 @@ const { size = 22, class: className = '' } = Astro.props;
           target="_blank"
           rel="noopener noreferrer"
           aria-label={s.label}
-          class="grid size-10 place-items-center rounded-full text-ink shadow-soft transition-transform duration-300 hover:-translate-y-1 hover:text-primary focus-visible:-translate-y-1 focus-visible:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary"
+          class="grid size-10 place-items-center rounded-full border border-border text-muted transition-all duration-300 hover:-translate-y-1 hover:border-accent hover:text-accent focus-visible:-translate-y-1 focus-visible:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           <Icon name={s.icon} width={size} height={size} />
         </a>

@@ -1,9 +1,8 @@
 ---
-import '@fontsource/poppins/400.css';
-import '@fontsource/poppins/500.css';
-import '@fontsource/poppins/600.css';
-import '@fontsource/poppins/700.css';
-import '@fontsource/poppins/800.css';
+import '@fontsource-variable/inter';
+import '@fontsource/space-grotesk/500.css';
+import '@fontsource/space-grotesk/600.css';
+import '@fontsource/space-grotesk/700.css';
 import '../styles/global.css';
 import { profile } from '../data/profile';
 
@@ -37,6 +36,14 @@ const personSchema = {
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Set theme before paint to avoid flash. Midnight Dev is dark-first. -->
+    <script is:inline>
+      (() => {
+        const stored = localStorage.getItem('theme');
+        const dark = stored ? stored === 'dark' : true;
+        document.documentElement.classList.toggle('dark', dark);
+      })();
+    </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />

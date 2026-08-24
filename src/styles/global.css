@@ -1,76 +1,110 @@
 @import 'tailwindcss';
 
+/* Enable class-based dark mode (toggled on <html>). */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /*
-  Design tokens — mapped from DESIGN_SYSTEM.md.
-  Tailwind v4 reads these `@theme` vars to generate utilities
-  (e.g. --color-primary => bg-primary/text-primary, --font-sans => font-sans).
+  Midnight Dev — semantic theme tokens.
+  Values switch at runtime via the .dark class on <html>; components use the
+  Tailwind utilities generated from `@theme inline` (bg-bg, text-fg, ...).
 */
-@theme {
-  /* Brand & primary */
-  --color-primary: #81bfda;
-  --color-primary-hover: #b1f0f7;
-  --color-secondary: #605ea1;
-  --color-accent: #ffbd73;
-  --color-teal: #1e9fab;
-  --color-rose: #b54769;
+:root {
+  --bg: #fbfcff;
+  --panel: #ffffff;
+  --panel-2: #f3f5fc;
+  --fg: #12141c;
+  --muted: #566072;
+  --border: rgba(18, 20, 28, 0.09);
+  --accent: #5661f6;
+  --accent-2: #06b6d4;
+  --on-accent: #ffffff;
+  --glow: rgba(86, 97, 246, 0.28);
+  --scrollbar-track: #eef0f6;
+  --scrollbar-thumb: #cdd2e0;
+}
 
-  /* Neutral & surface */
-  --color-bg: #fbfbfb;
-  --color-surface: #f4f6ff;
-  --color-surface-2: #efefef;
-  --color-ink: #444444;
-  --color-ink-muted: #6b7280;
+.dark {
+  --bg: #0b0e14;
+  --panel: #141926;
+  --panel-2: #1b2130;
+  --fg: #e6e9f0;
+  --muted: #9aa3b2;
+  --border: rgba(255, 255, 255, 0.09);
+  --accent: #6d7cff;
+  --accent-2: #22d3ee;
+  --on-accent: #0b0e14;
+  --glow: rgba(109, 124, 255, 0.35);
+  --scrollbar-track: #141926;
+  --scrollbar-thumb: #2a3346;
+}
 
-  /* Typography */
-  --font-sans: 'Poppins', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-panel-2: var(--panel-2);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-on-accent: var(--on-accent);
 
-  /* Radius */
-  --radius-blob: 55% 45% 55% 45%;
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Space Grotesk', var(--font-sans);
 
-  /* Shadow */
-  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.08);
-  --shadow-nav: 0 1px 6px rgba(0, 0, 0, 0.1);
-  --shadow-soft: 0 2px 5px rgba(0, 0, 0, 0.1);
+  --radius-blob: 58% 42% 55% 45% / 45% 50% 50% 55%;
 
-  /* Motion */
+  --shadow-card: 0 8px 30px rgba(2, 6, 23, 0.08);
+  --shadow-glow: 0 10px 40px -8px var(--glow);
+  --shadow-soft: 0 2px 8px rgba(2, 6, 23, 0.08);
+
   --animate-img-float: img-float 7s ease-in-out infinite;
 }
 
 @keyframes img-float {
   50% {
-    transform: translateY(10px);
-    border-radius: 45% 55% 45% 55%;
+    transform: translateY(12px);
   }
 }
 
 /* Base */
 html {
   scroll-behavior: smooth;
+  color-scheme: light;
+}
+html.dark {
+  color-scheme: dark;
 }
 
 body {
-  background: var(--color-bg);
-  color: var(--color-ink);
+  background: var(--bg);
+  color: var(--fg);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
-/* Custom scrollbar (matches legacy look) */
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
 ::-webkit-scrollbar {
   width: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--scrollbar-track);
 }
 ::-webkit-scrollbar-thumb {
-  background: #ccc;
+  background: var(--scrollbar-thumb);
   border-radius: 30px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #bbb;
-}
 
-/* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,
@@ -82,11 +116,35 @@ body {
   }
 }
 
-/* Reusable layout helper */
+/* Helpers */
 .container-page {
   max-width: 1200px;
   margin-inline: auto;
   padding-inline: clamp(1rem, 5vw, 4rem);
+}
+
+/* Monospace eyebrow label (e.g. "01 — ABOUT") */
+.eyebrow {
+  font-family: ui-monospace, 'SFMono-Regular', 'Cascadia Code', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Gradient accent text */
+.text-gradient {
+  background: linear-gradient(120deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Glass surface for the navbar */
+.glass {
+  background: color-mix(in srgb, var(--panel) 72%, transparent);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
 }
 
 /* Scroll reveal */
