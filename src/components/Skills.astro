@@ -1,0 +1,31 @@
+---
+import { Icon } from 'astro-icon/components';
+import { skillGroups } from '../data/skills';
+---
+
+<section id="skills" class="scroll-mt-24">
+  <div class="container-page py-20 md:py-28">
+    <h2 class="text-4xl font-extrabold text-ink sm:text-5xl">Skills</h2>
+    <p class="mt-4 max-w-2xl text-ink-muted">
+      Tools and technologies I use to build and maintain web applications and systems.
+    </p>
+
+    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal>
+      {
+        skillGroups.map((group) => (
+          <div class="rounded-2xl border border-black/5 bg-white p-6 shadow-card">
+            <h3 class="text-lg font-bold text-secondary">{group.title}</h3>
+            <ul class="mt-4 flex flex-wrap gap-2.5">
+              {group.items.map((skill) => (
+                <li class="inline-flex items-center gap-2 rounded-lg bg-surface px-3 py-1.5 text-sm font-medium text-ink">
+                  {skill.icon && <Icon name={skill.icon} width={18} height={18} />}
+                  {skill.name}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

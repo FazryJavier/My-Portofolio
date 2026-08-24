@@ -1,0 +1,14 @@
+---
+import SocialIcons from './SocialIcons.astro';
+import { profile } from '../data/profile';
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-primary">
+  <div class="container-page flex flex-col items-center gap-4 py-8 text-center sm:flex-row sm:justify-between sm:text-left">
+    <p class="font-medium text-ink">
+      © {year} {profile.name}. All rights reserved.
+    </p>
+    <SocialIcons size={20} />
+  </div>
+</footer>

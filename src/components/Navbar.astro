@@ -1,0 +1,139 @@
+---
+import { Icon } from 'astro-icon/components';
+import { profile } from '../data/profile';
+
+const links = [
+  { label: 'Home', href: '#home' },
+  { label: 'About', href: '#about' },
+  { label: 'Skills', href: '#skills' },
+  { label: 'Project', href: '#projects' },
+  { label: 'Contact', href: '#contact' },
+];
+---
+
+<header
+  id="site-header"
+  class="fixed inset-x-0 top-0 z-50 bg-primary/90 backdrop-blur-md transition-all duration-300"
+  data-shrink="false"
+>
+  <nav class="container-page flex h-[90px] items-center justify-between transition-all duration-300" id="site-nav">
+    <a href="#home" class="text-2xl font-bold text-teal">{profile.shortName}</a>
+
+    <!-- Desktop menu -->
+    <ul class="hidden items-center gap-1 md:flex" id="nav-links">
+      {
+        links.map((l) => (
+          <li>
+            <a
+              href={l.href}
+              class="nav-link relative rounded-md px-4 py-2 font-medium text-ink transition-colors hover:text-secondary aria-[current=true]:text-secondary"
+            >
+              {l.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="flex items-center gap-3">
+      <a
+        href={profile.cv}
+        class="hidden items-center gap-2 rounded-lg bg-secondary px-4 py-2.5 font-medium text-white shadow-soft transition-colors hover:bg-primary-hover hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary sm:inline-flex"
+        download
+      >
+        <Icon name="lucide:download" width={18} height={18} />
+        Download CV
+      </a>
+
+      <!-- Hamburger -->
+      <button
+        id="nav-toggle"
+        class="grid size-10 place-items-center rounded-md text-ink md:hidden"
+        aria-label="Toggle menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <Icon name="lucide:menu" width={28} height={28} />
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div
+    id="mobile-menu"
+    class="hidden flex-col gap-2 border-t border-white/30 bg-primary/95 px-[5vw] py-4 backdrop-blur-md md:!hidden"
+  >
+    {
+      links.map((l) => (
+        <a
+          href={l.href}
+          class="mobile-link rounded-md px-3 py-2 font-medium text-ink transition-colors hover:bg-white/30"
+        >
+          {l.label}
+        </a>
+      ))
+    }
+    <a
+      href={profile.cv}
+      class="mt-1 inline-flex items-center justify-center gap-2 rounded-lg bg-secondary px-4 py-2.5 font-medium text-white"
+      download
+    >
+      <Icon name="lucide:download" width={18} height={18} />
+      Download CV
+    </a>
+  </div>
+</header>
+
+<script>
+  const header = document.getElementById('site-header');
+  const nav = document.getElementById('site-nav');
+  const toggle = document.getElementById('nav-toggle');
+  const menu = document.getElementById('mobile-menu');
+
+  // Shrink navbar on scroll
+  const onScroll = () => {
+    if (!header || !nav) return;
+    const shrink = window.scrollY > 50;
+    header.classList.toggle('shadow-nav', shrink);
+    nav.classList.toggle('h-[70px]', shrink);
+    nav.classList.toggle('h-[90px]', !shrink);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Mobile menu toggle
+  toggle?.addEventListener('click', () => {
+    const open = menu?.classList.toggle('hidden') === false;
+    menu?.classList.toggle('flex', open);
+    toggle.setAttribute('aria-expanded', String(open));
+  });
+  menu?.querySelectorAll('.mobile-link').forEach((a) =>
+    a.addEventListener('click', () => {
+      menu.classList.add('hidden');
+      menu.classList.remove('flex');
+      toggle?.setAttribute('aria-expanded', 'false');
+    })
+  );
+
+  // Active link via IntersectionObserver
+  const navLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('.nav-link'));
+  const sections = navLinks
+    .map((l) => document.querySelector(l.getAttribute('href') || ''))
+    .filter(Boolean) as Element[];
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        navLinks.forEach((l) =>
+          l.setAttribute(
+            'aria-current',
+            l.getAttribute('href') === `#${entry.target.id}` ? 'true' : 'false'
+          )
+        );
+      });
+    },
+    { rootMargin: '-40% 0px -55% 0px' }
+  );
+  sections.forEach((s) => observer.observe(s));
+</script>

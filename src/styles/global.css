@@ -1,0 +1,110 @@
+@import 'tailwindcss';
+
+/*
+  Design tokens — mapped from DESIGN_SYSTEM.md.
+  Tailwind v4 reads these `@theme` vars to generate utilities
+  (e.g. --color-primary => bg-primary/text-primary, --font-sans => font-sans).
+*/
+@theme {
+  /* Brand & primary */
+  --color-primary: #81bfda;
+  --color-primary-hover: #b1f0f7;
+  --color-secondary: #605ea1;
+  --color-accent: #ffbd73;
+  --color-teal: #1e9fab;
+  --color-rose: #b54769;
+
+  /* Neutral & surface */
+  --color-bg: #fbfbfb;
+  --color-surface: #f4f6ff;
+  --color-surface-2: #efefef;
+  --color-ink: #444444;
+  --color-ink-muted: #6b7280;
+
+  /* Typography */
+  --font-sans: 'Poppins', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Radius */
+  --radius-blob: 55% 45% 55% 45%;
+
+  /* Shadow */
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-nav: 0 1px 6px rgba(0, 0, 0, 0.1);
+  --shadow-soft: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+  /* Motion */
+  --animate-img-float: img-float 7s ease-in-out infinite;
+}
+
+@keyframes img-float {
+  50% {
+    transform: translateY(10px);
+    border-radius: 45% 55% 45% 55%;
+  }
+}
+
+/* Base */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom scrollbar (matches legacy look) */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 30px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #bbb;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Reusable layout helper */
+.container-page {
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 5vw, 4rem);
+}
+
+/* Scroll reveal */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+[data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
