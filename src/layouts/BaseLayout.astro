@@ -1,8 +1,8 @@
 ---
-import '@fontsource-variable/inter';
-import '@fontsource/space-grotesk/500.css';
-import '@fontsource/space-grotesk/600.css';
-import '@fontsource/space-grotesk/700.css';
+import '@fontsource/poppins/400.css';
+import '@fontsource/poppins/500.css';
+import '@fontsource/poppins/600.css';
+import '@fontsource/poppins/700.css';
 import '../styles/global.css';
 import { profile } from '../data/profile';
 
@@ -36,17 +36,18 @@ const personSchema = {
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Set theme before paint to avoid flash. Midnight Dev is dark-first. -->
+    <!-- Set theme before paint to avoid a flash when a visitor has a preference. -->
     <script is:inline>
       (() => {
         const stored = localStorage.getItem('theme');
-        const dark = stored ? stored === 'dark' : true;
+        const dark = stored ? stored === 'dark' : false;
         document.documentElement.classList.toggle('dark', dark);
       })();
     </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#fcfcfd" />
 
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -72,10 +73,12 @@ const personSchema = {
 
     <script
       type="application/ld+json"
+      is:inline
       set:html={JSON.stringify(personSchema)}
     />
   </head>
-  <body>
+  <body class="min-h-screen">
+    <a class="skip-link" href="#main-content">Skip to content</a>
     <slot />
     <script>
       import '../scripts/reveal';
