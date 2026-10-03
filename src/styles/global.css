@@ -44,7 +44,6 @@
   --soft-primary: var(--color-primary-50);
   --soft-secondary: var(--color-secondary-50);
   --on-accent: var(--color-white);
-  --glow: color-mix(in srgb, var(--color-primary) 28%, transparent);
   --scrollbar-track: var(--color-gray-100);
   --scrollbar-thumb: var(--color-gray-300);
 
@@ -79,7 +78,6 @@
   --soft-primary: #102d55;
   --soft-secondary: #3b2518;
   --on-accent: var(--color-white);
-  --glow: color-mix(in srgb, var(--color-primary) 40%, transparent);
   --scrollbar-track: #132238;
   --scrollbar-thumb: #2d4666;
 }
@@ -128,13 +126,6 @@
   --shadow-card: 0 12px 30px color-mix(in srgb, var(--color-gray-900) 8%, transparent);
   --shadow-card-hover: 0 18px 44px color-mix(in srgb, var(--color-gray-900) 13%, transparent);
   --shadow-soft: 0 2px 8px color-mix(in srgb, var(--color-gray-900) 8%, transparent);
-  --animate-float: portrait-float 7s ease-in-out infinite;
-}
-
-@keyframes portrait-float {
-  50% {
-    transform: translateY(8px);
-  }
 }
 
 html {
@@ -201,35 +192,15 @@ h4,
 }
 
 .eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  color: var(--color-primary);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   line-height: 1.25rem;
-  text-transform: uppercase;
-}
-
-.eyebrow::before {
-  width: 1.5rem;
-  height: 2px;
-  border-radius: var(--radius-full);
-  background: var(--color-secondary);
-  content: '';
 }
 
 .text-balance {
   text-wrap: balance;
-}
-
-.hero-grid {
-  background-image:
-    linear-gradient(to right, color-mix(in srgb, var(--color-primary) 7%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in srgb, var(--color-primary) 7%, transparent) 1px, transparent 1px);
-  background-size: 44px 44px;
-  mask-image: linear-gradient(to bottom, black 0%, black 62%, transparent 100%);
 }
 
 .glass {

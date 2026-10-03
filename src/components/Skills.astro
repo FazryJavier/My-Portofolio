@@ -3,58 +3,43 @@ import { Icon } from 'astro-icon/components';
 import { skillGroups } from '../data/skills';
 ---
 
-<section id="skills" class="border-y border-border bg-panel-subtle scroll-mt-20">
+<section id="skills" class="border-y border-border scroll-mt-20">
   <div class="container-page py-20 md:py-32">
-    <div class="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+    <div class="grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-end">
       <div class="max-w-2xl">
         <p class="eyebrow">The toolkit</p>
         <h2 class="text-balance mt-4 font-display text-3xl font-semibold leading-tight text-fg sm:text-5xl">
-          Practical tools for ambitious ideas.
+          Tools I reach for when the problem calls for them.
         </h2>
       </div>
-      <p class="max-w-md text-base leading-7 text-muted lg:pb-1">
-        A flexible stack helps me move from a first API contract to a calm, responsive interface without losing the plot.
+      <p class="max-w-xl text-base leading-7 text-muted lg:justify-self-end lg:text-lg">
+        The stack changes with the work. These are the tools I have used to shape interfaces, APIs, CMS workflows, and experiments.
       </p>
     </div>
 
-    <div class="mt-10 grid gap-4 sm:mt-12 md:grid-cols-3" data-reveal>
+    <div class="mt-10 border-y border-border sm:mt-12" data-reveal>
       {
         skillGroups.map((group, index) => (
-          <div class="group rounded-2xl border border-border bg-panel p-6 shadow-soft transition-[transform,border-color,box-shadow] duration-150 hover:-translate-y-1 hover:border-primary-100 hover:shadow-card">
-            <div class="flex items-center justify-between">
-              <span class="grid size-10 place-items-center rounded-lg bg-soft-primary text-primary">
-                <Icon
-                  name={index === 0 ? 'lucide:braces' : index === 1 ? 'lucide:blocks' : 'lucide:database'
-                  }
-                  width={19}
-                  height={19}
-                  aria-hidden="true"
-                />
-              </span>
-              <span class="font-mono text-xs font-semibold text-muted">0{index + 1}</span>
+          <article class:list={['grid gap-5 py-7 md:grid-cols-[11rem_1fr] md:gap-8 md:py-8', index > 0 && 'border-t border-border']}>
+            <div>
+              <p class="font-mono text-sm font-medium text-muted">0{index + 1}</p>
+              <h3 class="mt-2 font-display text-xl font-semibold text-fg">{group.title}</h3>
             </div>
-            <h3 class="mt-6 font-display text-lg font-semibold text-fg">{group.title}</h3>
-            <ul class="mt-5 flex flex-wrap gap-2">
+            <ul class="flex flex-wrap content-start gap-x-5 gap-y-3" aria-label={group.title}>
               {group.items.map((skill) => (
-                <li class="inline-flex items-center gap-2 rounded-full border border-border bg-panel-subtle px-3 py-1.5 text-xs font-medium text-fg transition-[border-color,color,background-color] duration-100 hover:border-primary hover:bg-soft-primary hover:text-primary">
-                  {skill.icon && <Icon name={skill.icon} width={15} height={15} aria-hidden="true" />}
+                <li class="inline-flex items-center gap-2 text-sm text-fg">
+                  {skill.icon && <Icon name={skill.icon} width={16} height={16} class="text-muted" aria-hidden="true" />}
                   {skill.name}
                 </li>
               ))}
             </ul>
-          </div>
+          </article>
         ))
       }
     </div>
 
-    <div class="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted">
-      <span class="font-semibold text-fg">Also exploring</span>
-      <span class="size-1 rounded-full bg-secondary" aria-hidden="true"></span>
-      AI agents
-      <span class="size-1 rounded-full bg-secondary" aria-hidden="true"></span>
-      System design
-      <span class="size-1 rounded-full bg-secondary" aria-hidden="true"></span>
-      Better developer experiences
-    </div>
+    <p class="mt-8 max-w-2xl text-sm leading-6 text-muted">
+      Right now, I am learning more about AI agents, system design, and ways to make everyday engineering work less repetitive.
+    </p>
   </div>
 </section>

@@ -9,6 +9,10 @@ url: https://simrsncimedismart.com/
 tags: ['Laravel', 'CMS', 'PHP', 'MySQL']
 category: cms
 featured: true
+caseStudy:
+  context: The company needed a public profile that could stay current as its information changed.
+  contribution: Built the Laravel 10 CMS and content structure behind the site.
+  outcome: Created a flexible, user-friendly way to manage and present company information.
 year: 2023
 order: 1
 ---

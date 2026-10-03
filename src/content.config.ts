@@ -14,6 +14,13 @@ const projects = defineCollection({
       tags: z.array(z.string()).default([]),
       category: z.enum(['web', 'cms', 'iot', 'ml']).default('web'),
       featured: z.boolean().default(false),
+      caseStudy: z
+        .object({
+          context: z.string(),
+          contribution: z.string(),
+          outcome: z.string(),
+        })
+        .optional(),
       year: z.number().optional(),
       order: z.number().default(0),
     }),

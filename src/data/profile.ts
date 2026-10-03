@@ -3,15 +3,13 @@
 export const profile = {
   name: 'Fazry Javier Nugraha',
   shortName: 'Javier',
-  // Rotated by the typing effect in the hero.
-  roles: ['Fullstack Engineer', 'Frontend Developer', 'Backend Developer'],
   role: 'Fullstack Engineer',
 
   heroBio:
-    "I'm a Fullstack Engineer at GITS Indonesia, building end-to-end web apps across frontend, backend, and APIs. Informatics graduate from ITENAS Bandung — currently exploring AI Agents to make engineering work smarter.",
+    "I'm a fullstack engineer based in Bandung, working across frontend, backend, APIs, and content workflows. I care about the decisions that make a system reliable behind the scenes and clear to use in front of people.",
 
   aboutBio:
-    "I'm a Fullstack Engineer at GITS Indonesia, where I build complete web solutions end to end — frontend, backend, REST APIs, and system integration. Along the way I've shipped frontend and backend systems, CMS platforms, and ERP applications, which taught me to balance clean user experience with reliable engineering. Lately I've been diving into AI Agents, exploring how they can automate and simplify day-to-day work. I love turning ideas into practical, intuitive products, and I'm always learning something new.",
+    "I'm a fullstack engineer at GITS Indonesia. My work has moved between CMS platforms, backend services, data-heavy interfaces, and system integrations. I like starting with the workflow behind the screen—what needs to happen, who maintains it, and where hand-offs can fail—then turning that into an interface people can use without a manual. Recently, I've been exploring AI agents as a practical way to reduce repetitive engineering work.",
 
   location: 'Bandung, Indonesia',
   email: 'fazryjavier125@gmail.com',
