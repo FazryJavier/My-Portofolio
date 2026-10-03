@@ -1,22 +1,194 @@
 ---
+import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
-import ProjectCard from './ProjectCard.astro';
 
-const projects = (await getCollection('projects')).sort(
-  (a, b) => a.data.order - b.data.order
-);
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+
+const categoryLabels = {
+  web: 'Web product',
+  cms: 'CMS platform',
+  iot: 'IoT experiment',
+  ml: 'Machine learning',
+} as const;
 ---
 
-<section id="projects" class="scroll-mt-24">
-  <div class="container-page py-24 md:py-32">
-    <p class="eyebrow">Work</p>
-    <h2 class="mt-3 font-display text-4xl font-bold text-fg sm:text-5xl">Selected projects</h2>
-    <p class="mt-4 max-w-2xl text-muted">
-      From CMS-driven company profiles to IoT and machine-learning experiments.
-    </p>
+<section id="projects" class="scroll-mt-20">
+  <div class="container-page py-20 md:py-32">
+    <div class="max-w-3xl">
+      <p class="eyebrow">Selected work</p>
+      <h2 class="text-balance mt-4 font-display text-3xl font-semibold leading-tight text-fg sm:text-5xl">
+        Projects built around real workflows.
+      </h2>
+      <p class="mt-5 max-w-2xl text-base leading-7 text-muted sm:text-lg">
+        Select a project to see the problem it addressed, the work I did, and the tools behind it.
+      </p>
+    </div>
 
-    <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal>
-      {projects.map((project) => <ProjectCard project={project} />)}
+    <div class="mt-10 border-y border-border lg:mt-14 lg:grid lg:grid-cols-[minmax(15rem,0.38fr)_minmax(0,1fr)]">
+      <div
+        role="tablist"
+        aria-label="Selected projects"
+        data-project-tablist
+        class="flex overflow-x-auto lg:block lg:border-r lg:border-border"
+      >
+        {
+          projects.map((project, index) => (
+            <button
+              type="button"
+              role="tab"
+              id={`project-tab-${project.id}`}
+              aria-controls={`project-panel-${project.id}`}
+              aria-selected={index === 0 ? 'true' : 'false'}
+              tabindex={index === 0 ? '0' : '-1'}
+              data-project-tab={project.id}
+              class="group min-w-[15rem] border-r border-border px-4 py-4 text-left transition-[background-color,color] duration-100 hover:bg-panel-subtle aria-selected:bg-panel-subtle lg:min-w-0 lg:w-full lg:border-b lg:border-r-0 lg:last:border-b-0 lg:px-6 lg:py-5"
+            >
+              <span class="font-mono text-xs font-medium text-muted group-aria-selected:text-primary">0{index + 1}</span>
+              <span class="mt-1 block text-sm font-semibold text-fg transition-colors duration-100 group-hover:text-primary group-aria-selected:text-primary">
+                {project.data.title}
+              </span>
+              <span class="mt-1 block text-xs text-muted">
+                {categoryLabels[project.data.category]}
+                {project.data.year && ` · ${project.data.year}`}
+              </span>
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="min-w-0">
+        {
+          projects.map((project, index) => {
+            const primaryLink = project.data.url ?? project.data.repo;
+            const caseStudy = project.data.caseStudy;
+
+            return (
+              <article
+                role="tabpanel"
+                id={`project-panel-${project.id}`}
+                aria-labelledby={`project-tab-${project.id}`}
+                data-project-panel={project.id}
+                hidden={index !== 0}
+                tabindex={index === 0 ? '0' : '-1'}
+                class="p-6 sm:p-8 lg:p-10"
+              >
+                <div class="grid gap-8 xl:grid-cols-[minmax(0,0.95fr)_minmax(18rem,0.75fr)] xl:items-start">
+                  <Image
+                    src={project.data.cover}
+                    alt={`${project.data.title} project preview`}
+                    width={1200}
+                    height={760}
+                    class="aspect-[16/10] w-full border border-border object-cover"
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                  />
+
+                  <div>
+                    <p class="font-mono text-sm font-medium text-primary">0{index + 1} / {categoryLabels[project.data.category]}</p>
+                    <div class="mt-4 flex flex-wrap items-baseline justify-between gap-3">
+                      <h3 class="font-display text-2xl font-semibold text-fg sm:text-3xl">
+                        {
+                          primaryLink ? (
+                            <a href={primaryLink} target="_blank" rel="noopener noreferrer" class="transition-colors duration-100 hover:text-primary">
+                              {project.data.title}
+                            </a>
+                          ) : (
+                            project.data.title
+                          )
+                        }
+                      </h3>
+                      {project.data.year && <p class="text-sm text-muted">{project.data.year}</p>}
+                    </div>
+                    <p class="mt-4 text-base leading-7 text-muted">{project.data.description}</p>
+
+                    {
+                      caseStudy && (
+                        <dl class="mt-7 border-y border-border">
+                          <div class="grid gap-2 border-b border-border py-4 sm:grid-cols-[7.5rem_1fr] sm:gap-4">
+                            <dt class="text-sm font-medium text-fg">The brief</dt>
+                            <dd class="text-sm leading-6 text-muted">{caseStudy.context}</dd>
+                          </div>
+                          <div class="grid gap-2 border-b border-border py-4 sm:grid-cols-[7.5rem_1fr] sm:gap-4">
+                            <dt class="text-sm font-medium text-fg">My contribution</dt>
+                            <dd class="text-sm leading-6 text-muted">{caseStudy.contribution}</dd>
+                          </div>
+                          <div class="grid gap-2 py-4 sm:grid-cols-[7.5rem_1fr] sm:gap-4">
+                            <dt class="text-sm font-medium text-fg">What changed</dt>
+                            <dd class="text-sm leading-6 text-muted">{caseStudy.outcome}</dd>
+                          </div>
+                        </dl>
+                      )
+                    }
+
+                    <p class="mt-6 text-sm leading-6 text-muted">
+                      <span class="font-medium text-fg">Built with:</span> {project.data.tags.join(' · ')}
+                    </p>
+                    <div class="mt-6 flex flex-wrap gap-x-5 gap-y-3 text-sm font-semibold">
+                      {project.data.url && (
+                        <a href={project.data.url} target="_blank" rel="noopener noreferrer" class="text-primary underline decoration-primary/40 underline-offset-4 transition-colors duration-100 hover:text-primary-700">
+                          Visit website
+                        </a>
+                      )}
+                      {project.data.repo && (
+                        <a href={project.data.repo} target="_blank" rel="noopener noreferrer" class="text-fg underline decoration-border underline-offset-4 transition-colors duration-100 hover:text-primary">
+                          View source
+                        </a>
+                      )}
+                      {!project.data.url && !project.data.repo && <span class="text-muted">Project archive</span>}
+                    </div>
+                  </div>
+                </div>
+              </article>
+            );
+          })
+        }
+      </div>
     </div>
   </div>
 </section>
+
+<script>
+  const projectTabs = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-project-tab]'));
+  const projectPanels = Array.from(document.querySelectorAll<HTMLElement>('[data-project-panel]'));
+
+  const activateProject = (id: string) => {
+    projectTabs.forEach((tab) => {
+      const isActive = tab.dataset.projectTab === id;
+      tab.setAttribute('aria-selected', String(isActive));
+      tab.tabIndex = isActive ? 0 : -1;
+    });
+
+    projectPanels.forEach((panel) => {
+      const isActive = panel.dataset.projectPanel === id;
+      panel.hidden = !isActive;
+      panel.tabIndex = isActive ? 0 : -1;
+    });
+  };
+
+  projectTabs.forEach((tab, index) => {
+    tab.addEventListener('click', () => activateProject(tab.dataset.projectTab ?? ''));
+
+    tab.addEventListener('keydown', (event) => {
+      const key = event.key;
+      if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'].includes(key)) return;
+
+      event.preventDefault();
+      const lastIndex = projectTabs.length - 1;
+      const nextIndex =
+        key === 'Home'
+          ? 0
+          : key === 'End'
+            ? lastIndex
+            : key === 'ArrowRight' || key === 'ArrowDown'
+              ? index === lastIndex
+                ? 0
+                : index + 1
+              : index === 0
+                ? lastIndex
+                : index - 1;
+      const nextTab = projectTabs[nextIndex];
+
+      nextTab.focus();
+      activateProject(nextTab.dataset.projectTab ?? '');
+    });
+  });
+</script>

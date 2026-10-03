@@ -7,6 +7,10 @@ cover: ../../assets/projects/project-4.png
 repo: https://github.com/FazryJavier/Posyandu-SedapMalam
 tags: ['Laravel', 'Data Viz', 'MySQL']
 category: web
+caseStudy:
+  context: A Posyandu profile site needed to show children's growth progress clearly.
+  contribution: Built the website and data visualisations for child-development charts and graphs.
+  outcome: Presented growth progress in a form that can be monitored and shared.
 year: 2024
 order: 4
 ---

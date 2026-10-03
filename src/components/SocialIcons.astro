@@ -9,7 +9,7 @@ interface Props {
 const { size = 22, class: className = '' } = Astro.props;
 ---
 
-<ul class={`flex items-center gap-4 ${className}`}>
+<ul class={`flex items-center gap-2 ${className}`}>
   {
     socialLinks.map((s) => (
       <li>
@@ -18,7 +18,7 @@ const { size = 22, class: className = '' } = Astro.props;
           target="_blank"
           rel="noopener noreferrer"
           aria-label={s.label}
-          class="grid size-10 place-items-center rounded-full border border-border text-muted transition-all duration-300 hover:-translate-y-1 hover:border-accent hover:text-accent focus-visible:-translate-y-1 focus-visible:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          class="grid size-10 place-items-center rounded-full border border-border bg-panel text-muted transition-[transform,border-color,color,background-color] duration-100 hover:-translate-y-1 hover:border-primary hover:bg-soft-primary hover:text-primary"
         >
           <Icon name={s.icon} width={size} height={size} />
         </a>
