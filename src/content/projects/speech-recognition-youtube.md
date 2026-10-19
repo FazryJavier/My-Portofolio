@@ -11,7 +11,7 @@ caseStudy:
   contribution: Built a Streamlit application that applies speech recognition to the command flow.
   outcome: Let users open YouTube content through spoken commands.
 year: 2023
-order: 6
+order: 7
 ---
 
 Developed a Streamlit application that uses speech recognition to help users

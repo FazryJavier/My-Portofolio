@@ -12,8 +12,12 @@ const projects = defineCollection({
       url: z.string().url().optional(),
       repo: z.string().url().optional(),
       tags: z.array(z.string()).default([]),
-      category: z.enum(['web', 'cms', 'iot', 'ml']).default('web'),
+      category: z.enum(['web', 'cms', 'iot', 'ml', 'game']).default('web'),
       featured: z.boolean().default(false),
+      gallery: z
+        .array(z.object({ src: image(), alt: z.string(), caption: z.string() }))
+        .default([]),
+      highlights: z.array(z.string()).default([]),
       caseStudy: z
         .object({
           context: z.string(),
