@@ -7,7 +7,7 @@ description: >-
 cover: ../../assets/projects/project-1.png
 url: https://simrsncimedismart.com/
 tags: ['Laravel', 'CMS', 'PHP', 'MySQL']
-category: cms
+categories: ['cms', 'web']
 featured: true
 caseStudy:
   context: The company needed a public profile that could stay current as its information changed.
