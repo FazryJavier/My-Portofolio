@@ -10,6 +10,7 @@ caseStudy:
   context: A university image-processing course project to grade apples by size without measuring by hand.
   contribution: Worked in a group of three on the detection and measurement pipeline and the GUI.
   outcome: A tool that shows the input image, the detected apple with its diameter in cm, and the resulting grade.
+year: 2022
 order: 8
 ---
 

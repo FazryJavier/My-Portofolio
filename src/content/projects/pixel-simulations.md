@@ -26,6 +26,7 @@ caseStudy:
   context: Students learning digital image processing needed a way to see what each operation actually does.
   contribution: Designed the interface and design system, implemented the simulations, refactored the code into a testable module, and added camera input.
   outcome: A responsive simulator with side-by-side comparison and live parameter controls, built for Itenas × Kampus Merdeka.
+year: 2024
 order: 5
 ---
 
