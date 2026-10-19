@@ -7,7 +7,7 @@ description: >-
 cover: ../../assets/projects/broyco/01-showcase.png
 repo: https://github.com/FazryJavier/broyco-cafe-web
 tags: ['HTML5', 'CSS3', 'JavaScript', 'SEO', 'Accessibility']
-category: web
+categories: ['web']
 gallery:
   - src: ../../assets/projects/broyco/02-mobile.png
     alt: Broy.Co landing page on three phone screens

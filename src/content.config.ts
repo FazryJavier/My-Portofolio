@@ -12,7 +12,7 @@ const projects = defineCollection({
       url: z.string().url().optional(),
       repo: z.string().url().optional(),
       tags: z.array(z.string()).default([]),
-      category: z.enum(['web', 'cms', 'iot', 'ml', 'game']).default('web'),
+      categories: z.array(z.enum(['web', 'cms', 'iot', 'ml', 'game'])).min(1).default(['web']),
       featured: z.boolean().default(false),
       gallery: z
         .array(z.object({ src: image(), alt: z.string(), caption: z.string() }))

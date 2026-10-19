@@ -5,7 +5,7 @@ description: >-
   YouTube content with voice commands.
 cover: ../../assets/projects/project-6.png
 tags: ['Python', 'Streamlit', 'Machine Learning']
-category: ml
+categories: ['ml']
 caseStudy:
   context: Users needed a hands-free way to open YouTube content with voice commands.
   contribution: Built a Streamlit application that applies speech recognition to the command flow.

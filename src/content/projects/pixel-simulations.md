@@ -6,7 +6,7 @@ description: >-
 cover: ../../assets/projects/pixel_simulation/01-showcase.png
 repo: https://github.com/dzakiabd/pixel-simulations-v3
 tags: ['Python', 'Streamlit', 'OpenCV', 'scikit-image', 'pytest']
-category: ml
+categories: ['web', 'ml']
 gallery:
   - src: ../../assets/projects/pixel_simulation/02-mobile.png
     alt: PixelSimulations on phone screens

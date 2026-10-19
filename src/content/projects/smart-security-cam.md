@@ -5,7 +5,7 @@ description: >-
   sensor, and lets users aim the camera with servos.
 cover: ../../assets/projects/iot/01-showcase.png
 tags: ['IoT', 'ESP32-CAM', 'PIR Sensor', 'Servo']
-category: iot
+categories: ['iot']
 highlights:
   - Real-time video streaming from anywhere.
   - PIR motion detection that sends a notification to the user.

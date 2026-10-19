@@ -2,7 +2,10 @@
 import { Image, getImage } from 'astro:assets';
 import { getCollection } from 'astro:content';
 
-const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+// Newest first; projects without a year go last, ties keep their manual `order`.
+const projects = (await getCollection('projects')).sort(
+  (a, b) => (b.data.year ?? 0) - (a.data.year ?? 0) || a.data.order - b.data.order,
+);
 
 // One slide list per project: the cover first, then the gallery. `full` is a large
 // variant used by the zoomable lightbox.
@@ -32,6 +35,16 @@ const categoryLabels = {
   ml: 'Machine learning',
   game: 'Game',
 } as const;
+
+const labelsOf = (cats: (keyof typeof categoryLabels)[]) => cats.map((c) => categoryLabels[c]).join(' · ');
+
+const filters = (Object.keys(categoryLabels) as (keyof typeof categoryLabels)[])
+  .map((key) => ({
+    key,
+    label: categoryLabels[key],
+    count: projects.filter((p) => p.data.categories.includes(key)).length,
+  }))
+  .filter((f) => f.count > 0);
 ---
 
 <section id="projects" class="scroll-mt-20">
@@ -46,7 +59,20 @@ const categoryLabels = {
       </p>
     </div>
 
-    <div class="mt-10 border-y border-border lg:mt-14 lg:grid lg:grid-cols-[minmax(13rem,0.28fr)_minmax(0,1fr)]">
+    <div role="group" aria-label="Filter projects by category" class="mt-10 flex flex-wrap gap-2 lg:mt-14">
+      <button type="button" data-filter="all" aria-pressed="true" class="inline-flex items-center gap-2 border border-border px-3.5 py-2 text-sm font-medium text-fg transition-colors duration-100 hover:border-primary hover:text-primary aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-white aria-pressed:[&>span]:text-white/80">
+        All <span class="text-muted">{projects.length}</span>
+      </button>
+      {
+        filters.map((f) => (
+          <button type="button" data-filter={f.key} aria-pressed="false" class="inline-flex items-center gap-2 border border-border px-3.5 py-2 text-sm font-medium text-fg transition-colors duration-100 hover:border-primary hover:text-primary aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-white aria-pressed:[&>span]:text-white/80">
+            {f.label} <span class="text-muted">{f.count}</span>
+          </button>
+        ))
+      }
+    </div>
+
+    <div class="mt-6 border-y border-border lg:grid lg:grid-cols-[minmax(13rem,0.28fr)_minmax(0,1fr)]">
       <div
         role="tablist"
         aria-label="Selected projects"
@@ -63,6 +89,7 @@ const categoryLabels = {
               aria-selected={index === 0 ? 'true' : 'false'}
               tabindex={index === 0 ? '0' : '-1'}
               data-project-tab={project.id}
+              data-categories={project.data.categories.join(' ')}
               class="group min-w-[15rem] border-r border-border px-4 py-4 text-left transition-[background-color,color] duration-100 hover:bg-panel-subtle aria-selected:bg-panel-subtle lg:min-w-0 lg:w-full lg:border-b lg:border-r-0 lg:last:border-b-0 lg:px-6 lg:py-5"
             >
               <span class="font-mono text-xs font-medium text-muted group-aria-selected:text-primary">0{index + 1}</span>
@@ -70,7 +97,7 @@ const categoryLabels = {
                 {project.data.title}
               </span>
               <span class="mt-1 block text-xs text-muted">
-                {categoryLabels[project.data.category]}
+                {labelsOf(project.data.categories)}
                 {project.data.year && ` · ${project.data.year}`}
               </span>
             </button>
@@ -91,6 +118,7 @@ const categoryLabels = {
                 id={`project-panel-${project.id}`}
                 aria-labelledby={`project-tab-${project.id}`}
                 data-project-panel={project.id}
+                data-categories={project.data.categories.join(' ')}
                 hidden={index !== 0}
                 tabindex={index === 0 ? '0' : '-1'}
                 class="p-6 sm:p-8 lg:p-10"
@@ -144,7 +172,7 @@ const categoryLabels = {
                   </div>
 
                   <div>
-                    <p class="font-mono text-sm font-medium text-primary">0{index + 1} / {categoryLabels[project.data.category]}</p>
+                    <p class="font-mono text-sm font-medium text-primary">0{index + 1} / {labelsOf(project.data.categories)}</p>
                     <div class="mt-4 flex flex-wrap items-baseline justify-between gap-3">
                       <h3 class="font-display text-2xl font-semibold text-fg sm:text-3xl">
                         {
@@ -264,7 +292,29 @@ const categoryLabels = {
     });
   };
 
-  projectTabs.forEach((tab, index) => {
+  const visibleTabs = () => projectTabs.filter((tab) => !tab.hidden);
+
+  // Category filter: a project matches when any of its categories equals the chip.
+  const filterChips = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-filter]'));
+
+  const applyFilter = (filter: string) => {
+    filterChips.forEach((chip) => chip.setAttribute('aria-pressed', String(chip.dataset.filter === filter)));
+
+    projectTabs.forEach((tab) => {
+      const categories = (tab.dataset.categories ?? '').split(' ');
+      tab.hidden = filter !== 'all' && !categories.includes(filter);
+    });
+
+    const current = projectTabs.find((tab) => tab.getAttribute('aria-selected') === 'true');
+    if (!current || current.hidden) {
+      const first = visibleTabs()[0];
+      if (first) activateProject(first.dataset.projectTab ?? '');
+    }
+  };
+
+  filterChips.forEach((chip) => chip.addEventListener('click', () => applyFilter(chip.dataset.filter ?? 'all')));
+
+  projectTabs.forEach((tab) => {
     tab.addEventListener('click', () => activateProject(tab.dataset.projectTab ?? ''));
 
     tab.addEventListener('keydown', (event) => {
@@ -272,7 +322,9 @@ const categoryLabels = {
       if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'].includes(key)) return;
 
       event.preventDefault();
-      const lastIndex = projectTabs.length - 1;
+      const tabs = visibleTabs();
+      const index = tabs.indexOf(tab);
+      const lastIndex = tabs.length - 1;
       const nextIndex =
         key === 'Home'
           ? 0
@@ -285,7 +337,7 @@ const categoryLabels = {
               : index === 0
                 ? lastIndex
                 : index - 1;
-      const nextTab = projectTabs[nextIndex];
+      const nextTab = tabs[nextIndex];
 
       nextTab.focus();
       activateProject(nextTab.dataset.projectTab ?? '');

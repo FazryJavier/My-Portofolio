@@ -5,7 +5,7 @@ description: >-
   against a ruler, and assigns a grade.
 cover: ../../assets/projects/project-10.png
 tags: ['Python', 'OpenCV', 'Image Processing', 'GUI']
-category: ml
+categories: ['ml']
 caseStudy:
   context: A university image-processing course project to grade apples by size without measuring by hand.
   contribution: Worked in a group of three on the detection and measurement pipeline and the GUI.

@@ -7,7 +7,7 @@ description: >-
 cover: ../../assets/projects/kesehatan_anak/01-showcase.png
 repo: https://github.com/FazryJavier/BI-KesehatanAnak
 tags: ['Laravel 12', 'Filament 4', 'PostgreSQL', 'Looker Studio', 'Design System']
-category: cms
+categories: ['web', 'cms']
 featured: true
 gallery:
   - src: ../../assets/projects/kesehatan_anak/02-mobile.png
