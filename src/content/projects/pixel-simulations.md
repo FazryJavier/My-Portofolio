@@ -4,6 +4,7 @@ description: >-
   An interactive image-processing simulator that lets students upload a photo,
   tune parameters, and compare the original with the result side by side.
 cover: ../../assets/projects/pixel_simulation/01-showcase.png
+repo: https://github.com/dzakiabd/pixel-simulations-v3
 tags: ['Python', 'Streamlit', 'OpenCV', 'scikit-image', 'pytest']
 category: ml
 gallery:

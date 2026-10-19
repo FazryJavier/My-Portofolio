@@ -16,6 +16,7 @@ const slidesByProject = Object.fromEntries(
       const slides = await Promise.all(
         raw.map(async (slide) => ({
           ...slide,
+          tall: slide.src.height / slide.src.width > 1.2,
           full: (await getImage({ src: slide.src, width: 2200, format: 'webp' })).src,
         })),
       );
@@ -45,7 +46,7 @@ const categoryLabels = {
       </p>
     </div>
 
-    <div class="mt-10 border-y border-border lg:mt-14 lg:grid lg:grid-cols-[minmax(15rem,0.38fr)_minmax(0,1fr)]">
+    <div class="mt-10 border-y border-border lg:mt-14 lg:grid lg:grid-cols-[minmax(13rem,0.28fr)_minmax(0,1fr)]">
       <div
         role="tablist"
         aria-label="Selected projects"
@@ -94,8 +95,8 @@ const categoryLabels = {
                 tabindex={index === 0 ? '0' : '-1'}
                 class="p-6 sm:p-8 lg:p-10"
               >
-                <div class="grid gap-8 xl:grid-cols-[minmax(0,0.95fr)_minmax(18rem,0.75fr)] xl:items-start">
-                  <div data-viewer class="min-w-0">
+                <div class="grid gap-8 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] xl:items-start">
+                  <div data-viewer class="min-w-0 xl:sticky xl:top-24">
                     <button
                       type="button"
                       data-viewer-open
@@ -112,7 +113,7 @@ const categoryLabels = {
                           data-full={slide.full}
                           data-caption={slide.caption}
                           hidden={i !== 0}
-                          class="aspect-[16/10] w-full object-contain"
+                          class:list={['aspect-[16/10] w-full', slide.tall ? 'object-cover object-top' : 'object-contain']}
                           loading={index === 0 && i === 0 ? 'eager' : 'lazy'}
                         />
                       ))}
