@@ -1,8 +1,28 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import { getCollection } from 'astro:content';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+
+// One slide list per project: the cover first, then the gallery. `full` is a large
+// variant used by the zoomable lightbox.
+const slidesByProject = Object.fromEntries(
+  await Promise.all(
+    projects.map(async (project) => {
+      const raw = [
+        { src: project.data.cover, alt: `${project.data.title} project preview`, caption: 'Overview' },
+        ...project.data.gallery,
+      ];
+      const slides = await Promise.all(
+        raw.map(async (slide) => ({
+          ...slide,
+          full: (await getImage({ src: slide.src, width: 2200, format: 'webp' })).src,
+        })),
+      );
+      return [project.id, slides] as const;
+    }),
+  ),
+);
 
 const categoryLabels = {
   web: 'Web product',
@@ -62,6 +82,7 @@ const categoryLabels = {
           projects.map((project, index) => {
             const primaryLink = project.data.url ?? project.data.repo;
             const caseStudy = project.data.caseStudy;
+            const slides = slidesByProject[project.id];
 
             return (
               <article
@@ -74,14 +95,52 @@ const categoryLabels = {
                 class="p-6 sm:p-8 lg:p-10"
               >
                 <div class="grid gap-8 xl:grid-cols-[minmax(0,0.95fr)_minmax(18rem,0.75fr)] xl:items-start">
-                  <Image
-                    src={project.data.cover}
-                    alt={`${project.data.title} project preview`}
-                    width={1200}
-                    height={760}
-                    class="aspect-[16/10] w-full border border-border object-cover"
-                    loading={index === 0 ? 'eager' : 'lazy'}
-                  />
+                  <div data-viewer class="min-w-0">
+                    <button
+                      type="button"
+                      data-viewer-open
+                      aria-label={`Enlarge ${project.data.title} image`}
+                      class="group relative block w-full cursor-zoom-in overflow-hidden border border-border bg-panel-subtle"
+                    >
+                      {slides.map((slide, i) => (
+                        <Image
+                          src={slide.src}
+                          alt={slide.alt}
+                          width={1200}
+                          height={750}
+                          data-slide
+                          data-full={slide.full}
+                          data-caption={slide.caption}
+                          hidden={i !== 0}
+                          class="aspect-[16/10] w-full object-contain"
+                          loading={index === 0 && i === 0 ? 'eager' : 'lazy'}
+                        />
+                      ))}
+                      <span class="pointer-events-none absolute bottom-3 right-3 border border-border bg-bg/90 px-2.5 py-1 text-xs font-medium text-fg opacity-0 transition-opacity duration-100 group-hover:opacity-100 group-focus-visible:opacity-100">
+                        Click to zoom
+                      </span>
+                    </button>
+                    <p data-viewer-caption class="mt-2 text-xs text-muted">{slides[0].caption}</p>
+                    {
+                      slides.length > 1 && (
+                        <ul class="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-5">
+                          {slides.map((slide, i) => (
+                            <li>
+                              <button
+                                type="button"
+                                data-viewer-thumb={i}
+                                aria-label={`Show ${slide.caption}`}
+                                aria-current={i === 0 ? 'true' : 'false'}
+                                class="block w-full overflow-hidden border border-border opacity-70 transition-[opacity,border-color] duration-100 hover:opacity-100 aria-[current=true]:border-primary aria-[current=true]:opacity-100"
+                              >
+                                <Image src={slide.src} alt="" width={240} height={150} class="aspect-[16/10] w-full object-cover object-top" loading="lazy" />
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      )
+                    }
+                  </div>
 
                   <div>
                     <p class="font-mono text-sm font-medium text-primary">0{index + 1} / {categoryLabels[project.data.category]}</p>
@@ -151,28 +210,6 @@ const categoryLabels = {
                     </div>
                   </div>
                 </div>
-
-                {
-                  project.data.gallery.length > 0 && (
-                    <ul class="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-label={`${project.data.title} screens`}>
-                      {project.data.gallery.map((shot) => (
-                        <li>
-                          <figure>
-                            <Image
-                              src={shot.src}
-                              alt={shot.alt}
-                              width={800}
-                              height={600}
-                              class="aspect-[4/3] w-full border border-border bg-panel-subtle object-cover object-top"
-                              loading="lazy"
-                            />
-                            <figcaption class="mt-2 text-xs text-muted">{shot.caption}</figcaption>
-                          </figure>
-                        </li>
-                      ))}
-                    </ul>
-                  )
-                }
               </article>
             );
           })
@@ -180,6 +217,32 @@ const categoryLabels = {
       </div>
     </div>
   </div>
+
+  <dialog
+    id="project-lightbox"
+    aria-label="Project image viewer"
+    class="m-0 h-full max-h-none w-full max-w-none bg-transparent p-0 backdrop:bg-black/85"
+  >
+    <div class="flex h-full flex-col text-white">
+      <div class="flex items-center justify-between gap-4 px-4 py-3 sm:px-6">
+        <p class="min-w-0 truncate text-sm">
+          <span data-lb-caption class="font-medium"></span>
+          <span data-lb-count class="ml-2 text-white/60"></span>
+        </p>
+        <div class="flex shrink-0 gap-2 text-sm font-medium">
+          <button type="button" data-lb-zoom class="border border-white/30 px-3 py-1.5 hover:bg-white/10">Zoom in</button>
+          <button type="button" data-lb-close class="border border-white/30 px-3 py-1.5 hover:bg-white/10">Close</button>
+        </div>
+      </div>
+      <div class="relative min-h-0 flex-1">
+        <div data-lb-stage class="flex h-full w-full overflow-auto">
+          <img data-lb-img alt="" class="m-auto max-h-full max-w-full cursor-zoom-in object-contain" />
+        </div>
+        <button type="button" data-lb-prev aria-label="Previous image" class="absolute left-3 top-1/2 -translate-y-1/2 border border-white/30 bg-black/60 px-3 py-2 hover:bg-black/80">&larr;</button>
+        <button type="button" data-lb-next aria-label="Next image" class="absolute right-3 top-1/2 -translate-y-1/2 border border-white/30 bg-black/60 px-3 py-2 hover:bg-black/80">&rarr;</button>
+      </div>
+    </div>
+  </dialog>
 </section>
 
 <script>
@@ -226,5 +289,92 @@ const categoryLabels = {
       nextTab.focus();
       activateProject(nextTab.dataset.projectTab ?? '');
     });
+  });
+
+  // Image viewer: thumbnails swap the main image; the main image opens a zoomable lightbox.
+  const lightbox = document.querySelector<HTMLDialogElement>('#project-lightbox')!;
+  const lbImg = lightbox.querySelector<HTMLImageElement>('[data-lb-img]')!;
+  const lbStage = lightbox.querySelector<HTMLElement>('[data-lb-stage]')!;
+  const lbCaption = lightbox.querySelector<HTMLElement>('[data-lb-caption]')!;
+  const lbCount = lightbox.querySelector<HTMLElement>('[data-lb-count]')!;
+  const lbZoom = lightbox.querySelector<HTMLButtonElement>('[data-lb-zoom]')!;
+
+  let activeViewer: HTMLElement | null = null;
+  let activeIndex = 0;
+  let zoomed = false;
+
+  const slidesOf = (viewer: HTMLElement) => Array.from(viewer.querySelectorAll<HTMLImageElement>('[data-slide]'));
+
+  const showSlide = (viewer: HTMLElement, i: number) => {
+    slidesOf(viewer).forEach((img, n) => (img.hidden = n !== i));
+    viewer.querySelectorAll<HTMLElement>('[data-viewer-thumb]').forEach((thumb) => {
+      thumb.setAttribute('aria-current', String(Number(thumb.dataset.viewerThumb) === i));
+    });
+    const caption = viewer.querySelector<HTMLElement>('[data-viewer-caption]');
+    if (caption) caption.textContent = slidesOf(viewer)[i].dataset.caption ?? '';
+  };
+
+  const setZoom = (value: boolean) => {
+    zoomed = value;
+    lbImg.classList.toggle('max-h-full', !value);
+    lbImg.classList.toggle('max-w-full', !value);
+    lbImg.classList.toggle('cursor-zoom-in', !value);
+    lbImg.classList.toggle('cursor-zoom-out', value);
+    lbImg.style.width = value ? 'max(200%, 1600px)' : '';
+    lbImg.style.maxWidth = value ? 'none' : '';
+    lbImg.style.maxHeight = value ? 'none' : '';
+    lbZoom.textContent = value ? 'Zoom out' : 'Zoom in';
+    lbStage.scrollTo(0, 0);
+  };
+
+  const renderLightbox = () => {
+    if (!activeViewer) return;
+    const slides = slidesOf(activeViewer);
+    const slide = slides[activeIndex];
+    lbImg.src = slide.dataset.full ?? slide.src;
+    lbImg.alt = slide.alt;
+    lbCaption.textContent = slide.dataset.caption ?? '';
+    lbCount.textContent = `${activeIndex + 1} / ${slides.length}`;
+    setZoom(false);
+    showSlide(activeViewer, activeIndex);
+  };
+
+  const hasMany = () => (activeViewer ? slidesOf(activeViewer).length > 1 : false);
+
+  const step = (delta: number) => {
+    if (!activeViewer || !hasMany()) return;
+    const total = slidesOf(activeViewer).length;
+    activeIndex = (activeIndex + delta + total) % total;
+    renderLightbox();
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-viewer]').forEach((viewer) => {
+    viewer.querySelectorAll<HTMLElement>('[data-viewer-thumb]').forEach((thumb) => {
+      thumb.addEventListener('click', () => showSlide(viewer, Number(thumb.dataset.viewerThumb)));
+    });
+
+    viewer.querySelector('[data-viewer-open]')?.addEventListener('click', () => {
+      activeViewer = viewer;
+      activeIndex = Math.max(0, slidesOf(viewer).findIndex((img) => !img.hidden));
+      lightbox.querySelectorAll<HTMLElement>('[data-lb-prev], [data-lb-next]').forEach((btn) => {
+        btn.hidden = !hasMany();
+      });
+      renderLightbox();
+      lightbox.showModal();
+    });
+  });
+
+  lightbox.querySelector('[data-lb-prev]')?.addEventListener('click', () => step(-1));
+  lightbox.querySelector('[data-lb-next]')?.addEventListener('click', () => step(1));
+  lightbox.querySelector('[data-lb-close]')?.addEventListener('click', () => lightbox.close());
+  lbZoom.addEventListener('click', () => setZoom(!zoomed));
+  lbImg.addEventListener('click', () => setZoom(!zoomed));
+  lightbox.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowLeft') step(-1);
+    if (event.key === 'ArrowRight') step(1);
+  });
+  lightbox.addEventListener('close', () => {
+    lbImg.removeAttribute('src');
+    activeViewer = null;
   });
 </script>
