@@ -5,6 +5,7 @@ description: >-
   visual identity, real content, WhatsApp ordering, and SEO and performance
   foundations, all in plain HTML, CSS, and JavaScript.
 cover: ../../assets/projects/broyco/01-showcase.png
+url: https://broyco-cafe-web.pages.dev/
 repo: https://github.com/FazryJavier/broyco-cafe-web
 tags: ['HTML5', 'CSS3', 'JavaScript', 'SEO', 'Accessibility']
 categories: ['web']
